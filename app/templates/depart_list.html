@@ -1,0 +1,47 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+
+<div class="panel panel-default">
+
+    <div>
+        <div class="container-fluid">
+            <div style="margin-bottom: 10px"> {#  这里是为了给按钮与表格table有点距1离 #}
+                <a class="btn btn-success" href="/depart/add/" target="_blank">新建部门</a>
+            </div>
+
+            <div class="panel panel-default">
+      <!-- Default panel contents -->
+      <div class="panel-heading">
+          <span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
+          部门列表</div>
+
+      <!-- Table添加一个边框 borderd -->
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>名称</th>
+            <th>操作</th>
+
+
+        </thead>
+        <tbody>
+        {% for obj in depart_list %}
+          <tr>
+            <th>{{ obj.id }} </th>
+            <td>{{  obj.title }}</td>
+            <td>
+                <a href="/depart/{{ obj.id }}/edit" class="btn btn-primary btn-xs">编辑</a>{# btn-primary和danger是颜色，btn-xs是按钮的大小 #}
+                <a href="/depart/delete/?id={{ obj.id }}"  class="btn btn-danger btn-xs">删除</a>
+            </td>
+          <tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
