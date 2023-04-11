@@ -1,0 +1,85 @@
+{% extends "layout.html" %}
+{% block content %}
+
+    <div class="panel panel-default">
+        <div>
+            <div class="container-fluid">
+                <div style="margin-bottom: 10px"> {#  这里是为了给按钮与表格table有点距1离 #}
+                    <form method="get">
+                        <a class="btn btn-success" href="/prettynum/add/" target="_blank">新增靓号</a>
+                        <div style="float:right;width: 500px; ">
+                            <div class="input-group">
+                                <input type="text" name="num" value="{{search_num}}" class="form-control"
+                                       placeholder="请输入手机号进行搜索">
+                                <span class="input-group-btn">
+                            <button class="btn btn-default" type="submit">
+                                <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+                            </button>
+                                     </span>
+                            </div><!-- /input-group -->
+                        </div>
+                    </form>
+                </div>
+
+
+
+
+
+
+
+
+
+
+
+
+                <div class="panel panel-default">
+                    <!-- Default panel contents -->
+                    <div class="panel-heading">
+                        <span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
+                        靓号列表
+                    </div>
+
+                    <!-- Table添加一个边框 borderd -->
+                    <table class="table table-bordered">
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>号码</th>
+                            <th>价格</th>
+                            <th>级别</th>
+                            <th>状态</th>
+                            <th>所属地</th>
+                            <th>操作</th>
+                        </thead>
+                        <tbody>
+                        {% for field in queryset %}
+                            <tr>
+                            <th>{{ field.id }}</th>
+                            <th>{{ field.mobile }}</th>
+                            <th>{{ field.price }}</th>
+                            <th>{{ field.get_level_display }}</th>
+                            <th>{{ field.get_status_display }}</th>
+                            <th>{{ field.zone }}</th>
+                            <td>
+                                <a href="/prettynum/{{ field.id }}/edit/"
+                                   class="btn btn-primary btn-xs">编辑</a>{# btn-primary和danger是颜色，btn-xs是按钮的大小 #}
+                                <a href="/prettynum/{{ field.id }}/delete/" class="btn btn-danger btn-xs">删除</a>
+                            </td>
+                        {% endfor %}
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div>
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination">
+                            {{ page_str_list }}
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}

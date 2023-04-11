@@ -33,7 +33,7 @@
 
         </thead>
         <tbody>
-        {% for obj in user_list %}
+        {% for obj in list_queryset %}
           <tr>
             <th>{{ obj.id }} </th>
             <th>{{ obj.zone }} </th>
@@ -45,8 +45,8 @@
             <th>{{ obj.create_time|date:"Y 年 m 月 d 日 H:i:s" }} </th> {# 格式Ymd His分别代表年月日时分秒 #}
             <th>{{ obj.depart.title }} </th>
             <td>
-                <a href="#" class="btn btn-primary btn-xs">编辑</a>{# btn-primary和danger是颜色，btn-xs是按钮的大小 #}
-                <a href="#" class="btn btn-danger btn-xs">删除</a>
+                <a href="/user/{{ obj.id }}/edit/" class="btn btn-primary btn-xs">编辑</a>{# btn-primary和danger是颜色，btn-xs是按钮的大小 #}
+                <a href="/user/{{ obj.id }}/delete/" class="btn btn-danger btn-xs">删除</a>
             </td>
           <tr>
         {% endfor %}
@@ -55,6 +55,10 @@
     </div>
         </div>
     </div>
+
+    <ul class="pagination">
+        {{ page_string }}
+    </ul>
 </div>
 
 {% endblock %}

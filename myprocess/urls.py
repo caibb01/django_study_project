@@ -15,17 +15,26 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from app import views
+from app.views import depart, user, prettynum
+
 urlpatterns = [
 
     # 部门管理
-    path('depart/list/', views.depart_list),
-    path('depart/add/', views.depart_add),
-    path('depart/delete/', views.depart_delete),
-    path('depart/<int:edit_id>/edit/', views.depart_edit),
+    path('depart/list/', depart.depart_list),
+    path('depart/add/', depart.depart_add),
+    path('depart/delete/', depart.depart_delete),
+    path('depart/<int:edit_id>/edit/', depart.depart_edit),
 
     # 用户管理
-    path('user/list/', views.user_list),
-    path('user/add/', views.user_add),
-    path('user/model/add/', views.user_model_list_add),
+    path('user/list/', user.user_list),
+    path('user/add/', user.user_add),
+    path('user/model/add/', user.user_model_list_add),
+    path('user/<int:nid>/edit/', user.user_model_edit),
+    path('user/<int:nid>/delete/', user.user_delete),
+
+    # 靓号管理
+    path('prettynum/list/', prettynum.prettynum_list),
+    path('prettynum/add/', prettynum.prettynum_add),
+    path('prettynum/<int:nid>/edit/', prettynum.prettynum_edit),
+    path('prettynum/<int:nid>/delete/', prettynum.prettynum_delete),
 ]

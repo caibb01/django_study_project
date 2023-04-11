@@ -1,4 +1,12 @@
 {% extends 'layout.html' %}
+{% load static %}
+
+
+{% block css %}
+    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.bootcss.com/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css" rel="stylesheet" />
+{% endblock %}
+
 {% block content %}
     <div>
         <div class="container">
@@ -31,10 +39,17 @@
                             <input type="text" class="form-control" name="age" placeholder="请输入您的年龄">
                         </div>
 
+
                         <div class="form-group">
-                            <label>入职时间</label>
-                            <input type="text" class="form-control" name="ctime" placeholder="请输入您的入职时间">
+                            <label class="control-label">入职时间</label>
+                            <div class="input-group date">
+                                <input class="form-control  validate[required,date[yyyy-MM-dd]]" type="text" name="ctime" id="date1" placeholder="请输入您的入职时间" />
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-calendar"></span>
+                                </span>
+                            </div>
                         </div>
+
 
                         <div class="form-group">
                             <label>地区</label>
@@ -63,8 +78,25 @@
                     </form>
                 </div>
             </div>
-
         </div>
     </div>
 
 {% endblock %}
+
+
+
+{% block js %}
+    <link href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdn.bootcss.com/moment.js/2.18.1/moment-with-locales.min.js"></script>
+    <script src="https://cdn.bootcss.com/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
+    <script>
+        $('#date1').datetimepicker({
+            format: 'YYYY-MM-DD',
+            allowInputToggle:true,
+            locale: moment.locale('zh-cn')
+        });
+</script>
+{% endblock %}
+
