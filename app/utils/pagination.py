@@ -19,7 +19,7 @@ def prettynum_list(request):
         {% endfor %}
 
         <ul class="pagination">
-             {{ page_string }}
+             {{ page_str_list }}
         </ul>
 
 """
