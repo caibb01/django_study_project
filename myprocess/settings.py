@@ -37,7 +37,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'app.apps.AppConfig',
 ]
-
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -46,7 +45,11 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'app.middleware.auth.AuthMiddlware',
+    # 'app.middleware.auth.M1MiddlewareMixin',
+    # 'app.middleware.auth.M2MiddlewareMixin',
 ]
+
 
 ROOT_URLCONF = 'myprocess.urls'
 
