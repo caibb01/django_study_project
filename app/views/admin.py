@@ -1,4 +1,7 @@
 from django.shortcuts import render, redirect, HttpResponse
+from django import forms
+from django.core.exceptions import ValidationError
+from app.utils.bootstrap import BootStrapModelForm
 
 from app.utils.pagination import Pagination
 from app.models import Admin
@@ -29,12 +32,6 @@ def admin_list(request):
     }
 
     return render(request, 'admin_list.html', context)
-
-
-from django import forms
-from django.core.exceptions import ValidationError
-from app.utils.bootstrap import BootStrapModelForm
-
 
 class AdminAddModelForms(BootStrapModelForm):
     confirm_password = forms.CharField(
@@ -122,14 +119,15 @@ class AdminResetModelForms(BootStrapModelForm):
         widgets = {
             "password": forms.PasswordInput(render_value=True)
         }
-
     def clean_password(self):
         password = self.cleaned_data.get("password")
         md5_password = md5(password)
+        # 查询当前用户的密码，进行判断是否一致，一致则提示用户不能与以前的密码相同
         ex = Admin.objects.filter(id=self.instance.pk, password=md5_password).exists()
         if ex:
             raise ValidationError("不能与以前的密码相同")
         return md5_password
+
 
     def clean_confirm_password(self):
         password = self.cleaned_data.get("password")
