@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Process</title>
+<link href="/static/css/bootstrap.min.css" rel="stylesheet">
+<link href="/static/css/back.css" rel="stylesheet">
+</head>
+<body class="login">
+  <div>
+      <form name="bosslogin" method="POST"  novalidate="novalidate" class="login-form">
+          {% csrf_token %}
+          <h3 class="title">用户登陆</h3>
+              <div class="form-group">
+                  <label>用户名</label>
+                  {{ form.username }}
+                  <span style="color: red">{{ form.username.errors.0 }}</span>
+              </div>
+              <div class="form-group">
+                  <label>密码</label>
+                  {{ form.password }}
+                  <span style="color: red">{{ form.password.errors.0 }}</span>
+              </div>
+              <button id="bosslogin" class="btn btn-primary btn-lg btn-block"
+                      style="padding: 10px 20px;background-color: #1890ff;color: #fff;">登录
+              </button>
+          </form>
+
+{#      <div >#}
+{#            <i class="fa-user" style="height:20px;width:20px;">账号:</i>#}
+{#          #}
+{#            <input type="text" class="form-control" id="inputEmail3" name="name" placeholder="请输入用户名"></p>#}
+{#      </div>#}
+{##}
+{#      <div>#}
+{#        <i class="fa-key" style="height:20px;width:20px;">密码:</i>#}
+{#        <input type="password" class="form-control" id="exampleInputPassword3" name="psw" placeholder="请输入密码">#}
+{#      </div>#}
+{##}
+{#      <div style="width:100%; margin:8px 0px;">#}
+{#          <button  id="bosslogin" class="btn btn-primary btn-lg btn-block" style="padding: 10px 20px;background-color: #1890ff;color: #fff;">登录</button>#}
+{#      </div>#}
+{#      <p style="color:red;text-align:center;">{{err_msg}}</p>#}
+{#    </form>#}
+
+    <div class="el-login-footer">
+    </div>
+  </div>
+</body>
+</html>

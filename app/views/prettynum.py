@@ -57,7 +57,7 @@ def prettynum_edit(request, nid):
         return render(request, 'prettynum_edit.html', {"form": form})
     form = PrettyEditNumForm(data=request.POST, instance=row_object)
     if form.is_valid():
-        form.instance.zone = "北京"
+        form.instance.zone = "北京"  # 设置修改后指定字段的默认值
         form.save()
         return redirect("/prettynum/list")
     return render(request, 'prettynum_edit.html', {"form": form})
