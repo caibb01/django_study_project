@@ -94,3 +94,15 @@ class Task(models.Model):
     title = models.CharField(verbose_name="标题", max_length=64)
     detail = models.TextField(verbose_name="详细信息")
     processor = models.ForeignKey(verbose_name="负责人", to="Admin", on_delete=models.CASCADE)
+
+
+class Order(models.Model):
+    Order_num = models.CharField(verbose_name="订单号", max_length=64)
+    title = models.CharField(verbose_name="商品名称", max_length=64)
+    price = models.IntegerField(verbose_name="价格")
+    status_choices = (
+        (1, "待支付"),
+        (2, "已支付")
+    )
+    status = models.SmallIntegerField(verbose_name="状态", choices=status_choices, default=1)
+    admin = models.ForeignKey(verbose_name="管理员", to="Admin", on_delete=models.CASCADE)
