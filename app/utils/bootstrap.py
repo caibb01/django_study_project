@@ -10,7 +10,7 @@ class BootStrap():
         for name, field in self.fields.items():
             if name == "create_time":
                 field.widget.attrs = {
-                    "class": "input-group date form-control  ",
+                    "class": "input-group date form-control",
 
                 }
                 continue

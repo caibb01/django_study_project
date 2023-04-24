@@ -1,37 +1,166 @@
-{% extends "layout.html" %}
 
+
+
+{% extends "layout.html" %}
 {% block content %}
-    <div class="container"></div>
-    <input type="button" class="btn btn-primary" value="订单">
-    <div class="modal fade" tabindex="-1" role="dialog">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title">Modal title</h4>
-      </div>
-      <div class="modal-body">
-        <p>One fine body&hellip;</p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
-      </div>
+
+    <div class="panel panel-default">
+        <div>
+            <div class="container-fluid">
+                <div style="margin-bottom: 10px"> {#  这里是为了给按钮与表格table有点距1离 #}
+                    <form method="get">
+                        <div style="float:left; margin-bottom: 10px">
+                            <input type="button" value="新建订单1" class="btn btn-primary" data-toggle="modal"
+                                   data-target="#mymodal">
+                            <input id="btnAdd" type="button" value="新建订单2" class="btn btn-primary">
+                        </div>
+                        <div style="float:right;width: 500px; ">
+                            <div class="input-group" style="margin-bottom: 10px">
+                                <input type="text"  name="order_num" value="{{ search_num }}" class="form-control"
+                                       placeholder="请输入订单号进行搜索">
+                                <span class="input-group-btn">
+                            <button class="btn btn-default" type="submit">
+                                <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+                            </button>
+                                     </span>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- 新建订单 （对话框）-->
+                <div class="modal fade" id="mymodal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                        aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title">新建订单</h4>
+                            </div>
+                            <div class="modal-body">
+                                <form id="orderajaxadd">
+                                    <div class="clearfix" style="position: relative;">
+                                        {% for obj in form %}
+                                            <div class="col-xs-6"></div>
+                                            <div class="form-group" style="margin-bottom: 25px"></div>
+                                            <label>{{ obj.label }}</label>
+                                            {{ obj }}
+                                            <span class="error-msg" style="color: red;position: absolute"></span>
+                                        {% endfor %}
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer" style="margin-bottom: 100px">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                                <button id="orderadd" type="submit" class="btn btn-primary">保存</button>
+                            </div>
+                        </div><!-- /.modal-content -->
+                    </div><!-- /.modal-dialog -->
+                </div><!-- /.modal -->
+
+            </div>
+
+
+            <div class="panel panel-default">
+                <!-- Default panel contents -->
+                <div class="panel-heading">
+                    <span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
+                    订单列表
+                </div>
+
+                <!-- Table添加一个边框 borderd -->
+                <table class="table table-bordered">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>订单号</th>
+                        <th>商品名称</th>
+                        <th>价格</th>
+                        <th>状态</th>
+                        <th>所属人</th>
+                    </thead>
+                    <tbody>
+                    {% for obj in queryset %}
+                        <tr>
+                            <th>{{ obj.id }} </th>
+                            <th>{{ obj.Order_num }} </th>
+                            <th>{{ obj.title }} </th>
+                            <td>{{ obj.price }}</td>
+                            <td>{{ obj.get_status_display }}</td>
+                            <td>{{ obj.admin.username }}</td>
+                            <td>
+                                <a href="/depart/{{ obj.id }}/edit"
+                                   class="btn btn-primary btn-xs">编辑</a>{# btn-primary和danger是颜色，btn-xs是按钮的大小 #}
+                                <a href="/depart/delete/?id={{ obj.id }}" class="btn btn-danger btn-xs">删除</a>
+                            </td>
+                        <tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+
+            <div>
+                <nav aria-label="Page navigation">
+                    <ul class="pagination">
+                        {{ page_str_list }}
+                    </ul>
+                </nav>
+            </div>
+        </div>
     </div>
-  </div>
-</div>
+    </div>
+
 
 {% endblock %}
 
 
 {% block js %}
+    <script type="text/javascript">
 
-    <script type="text/javascript" >
         $(function () {
-
-
-
+            OrderListEvent();
+            OrderAJaxAddEvent();
         })
+
+        function OrderListEvent() {
+            $("#btnAdd").click(function () {
+                $("#mymodal").modal("show")
+            });
+        }
+
+        function OrderAJaxAddEvent() {
+
+            $("#orderadd").click(function () {
+                // 清除所有错误信息
+                $(".error-msg").empty();
+
+                // 向后台发送请求
+                $.ajax({
+                    url: "/order/add/",
+                    type: 'post',
+                    data: $('#orderajaxadd').serialize(),
+                    dataType: "JSON",
+                    success: function (res) {
+                        if (res.status) {
+                            alert("添加成功");
+                            $("#orderajaxadd")[0].reset()
+                            $("#mymodal").modal("hide")
+                            location.reload()
+
+                        } else {
+                            $.each(res.errors, function (name, data) {
+                                $("#id_" + name).next().text(data[0])
+                                console.log(name, data)
+                            })
+                        }
+                        console.log(res.code)
+                        console.log(res.error)
+
+                    },
+                })
+            })
+        }
 
 
     </script>
