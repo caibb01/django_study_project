@@ -24,12 +24,12 @@ def task_list(request):
     form = TaskAddModelForm()
     search_data = request.GET.get("search_data", '')
     print(search_data, type(search_data))
-    # search_dict = {
-    #     "Q(title__contains)": search_data,
-    #     "Q(detail__contains)": search_data
-    # }
-    Q(title__contains=search_data) | Q(detail__contains=search_data),Q(title__contains=search_data)
-    queryset = Task.objects.filter(**search_dict).order_by("-id")
+    search_dict = {
+        "Q(title__contains)": search_data,
+        "Q(detail__contains)": search_data
+    }
+    queryset = Task.objects.filter(    Q(title__contains=search_data) | Q(detail__contains=search_data)
+).order_by("-id")
     queryset_list = Pagination(request, queryset=queryset)
     conment = {
         "form": form,
