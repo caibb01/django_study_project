@@ -1,6 +1,3 @@
-
-
-
 {% extends "layout.html" %}
 {% block content %}
 
@@ -16,7 +13,7 @@
                         </div>
                         <div style="float:right;width: 500px; ">
                             <div class="input-group" style="margin-bottom: 10px">
-                                <input type="text"  name="order_num" value="{{ search_num }}" class="form-control"
+                                <input type="text" name="order_num" value="{{ search_num }}" class="form-control"
                                        placeholder="请输入订单号进行搜索">
                                 <span class="input-group-btn">
                             <button class="btn btn-default" type="submit">
@@ -28,35 +25,6 @@
                     </form>
                 </div>
 
-                <!-- 新建订单 （对话框）-->
-                <div class="modal fade" id="mymodal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                                        aria-hidden="true">&times;</span></button>
-                                <h4 class="modal-title">新建订单</h4>
-                            </div>
-                            <div class="modal-body">
-                                <form id="orderajaxadd">
-                                    <div class="clearfix" style="position: relative;">
-                                        {% for obj in form %}
-                                            <div class="col-xs-6"></div>
-                                            <div class="form-group" style="margin-bottom: 25px"></div>
-                                            <label>{{ obj.label }}</label>
-                                            {{ obj }}
-                                            <span class="error-msg" style="color: red;position: absolute"></span>
-                                        {% endfor %}
-                                    </div>
-                                </form>
-                            </div>
-                            <div class="modal-footer" style="margin-bottom: 100px">
-                                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                                <button id="orderadd" type="submit" class="btn btn-primary">保存</button>
-                            </div>
-                        </div><!-- /.modal-content -->
-                    </div><!-- /.modal-dialog -->
-                </div><!-- /.modal -->
 
             </div>
 
@@ -89,9 +57,10 @@
                             <td>{{ obj.get_status_display }}</td>
                             <td>{{ obj.admin.username }}</td>
                             <td>
-                                <a href="/depart/{{ obj.id }}/edit"
-                                   class="btn btn-primary btn-xs">编辑</a>{# btn-primary和danger是颜色，btn-xs是按钮的大小 #}
-                                <a href="/depart/delete/?id={{ obj.id }}" class="btn btn-danger btn-xs">删除</a>
+                                <input uid="{{ obj.id }}" type="button" class="btn btn-primary btn-xs order-edit"
+                                       value="编辑">
+                                <input uid="{{ obj.id }}" type="button" class="btn btn-danger btn-xs order-delete"
+                                       value="删除">
                             </td>
                         <tr>
                     {% endfor %}
@@ -111,55 +80,237 @@
     </div>
     </div>
 
+    <!-- 新建/编辑订单 （对话框）-->
+    <div class="modal fade" id="mymodal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="create-edit">新建订单</h4>
+                </div>
+                <div class="modal-body">
+                    <form id="orderajaxadd">
+                        <div class="clearfix" style="position: relative;">
+                            {% for obj in form %}
+                                <div class="col-xs-6"></div>
+                                <div class="form-group" style="margin-bottom: 25px"></div>
+                                <label>{{ obj.label }}</label>
+                                {{ obj }}
+                                <span class="error-msg" style="color: red;position: absolute"></span>
+                            {% endfor %}
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer" style="margin-bottom: 100px">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button id="orderadd" type="submit" class="btn btn-primary">保存</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+    <!-- 删除对话框 -->
+    <div class="modal fade " id="mydelete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+
+            <div class="alert alert-danger alert-dismissible fade in" role="alert">
+                <h4>是否确定删除？</h4>
+                <p style="margin: 10px 0;">如果你删除了我，那我相关的数据也会被删除，因为我们是级联关系</p>
+                <p style="text-align: right;">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">取消</button>
+                    <button confirmid="{{ obj.id }}" id="comfirmdelete" type="button" class="btn btn-default">确定
+                    </button>
+                </p>
+            </div>
+        </div>
+    </div>
 
 {% endblock %}
 
 
 {% block js %}
     <script type="text/javascript">
-
+        var DELETEID;
+        var EDIT_ID;
         $(function () {
             OrderListEvent();
             OrderAJaxAddEvent();
+            OrderDeleteEvent();
+            OrderComfirmDeleteEvent();
+            OrderEditEvent();
         })
 
         function OrderListEvent() {
             $("#btnAdd").click(function () {
+                // 由于EDIT_ID设置了全局变量，导致点击t添加的时候会显示ID，所以要清空
+                EDIT_ID = undefined
+
+                // 清除表单的信息
+                $("#orderajaxadd")[0].reset();
+
+                // 修改对话框的标题
+                $(".modal-title").text("快来新建订单")
+
+                // 显示对话框
                 $("#mymodal").modal("show")
             });
         }
 
         function OrderAJaxAddEvent() {
 
+
             $("#orderadd").click(function () {
-                // 清除所有错误信息
+
+                // 清空错误信息
                 $(".error-msg").empty();
 
-                // 向后台发送请求
+                // 判断EDIT_ID 是编辑还是添加
+                if (EDIT_ID) {
+                    // 编辑
+                    DoEdit()
+                } else {
+                    //添加
+                    DoAdd()
+                }
+            })
+        }
+        function DoEdit() {
+
+            // 向后台发送请求,进行编辑
+            $.ajax({
+                url: "/order/edit/" + "?uid=" + EDIT_ID,
+                type: 'post',
+                data: $('#orderajaxadd').serialize(),
+                dataType: "JSON",
+                success: function (res) {
+                    if (res.status) {
+
+                        // 清空表单 $("#orderajaxadd")是jQuery对象-->$("#orderajaxadd")[0] 是DOM对象
+                        $("#orderajaxadd")[0].reset()
+
+                        // 关闭对话框
+                        $("#mymodal").modal("hide")
+
+                        //刷新页面
+                        location.reload()
+
+                    } else {
+                        if (res.tips) {
+                            alert(res.tips)
+
+                        } else {
+                            // 把错误信息显示在对话框中
+                            $.each(res.errors, function (name, errorList) {
+                                $("#id_" + name).next().text(errorList[0])
+                            })
+                        }
+                    }
+                    console.log(res.code)
+                    console.log(res.error)
+                },
+            })
+        }
+
+
+        function DoAdd() {
+
+            // 向后台发送请求，进行添加
+            $.ajax({
+                url: "/order/add/",
+                type: 'post',
+                data: $('#orderajaxadd').serialize(),
+                dataType: "JSON",
+                success: function (res) {
+                    if (res.status) {
+                        alert("添加成功");
+                        $("#orderajaxadd")[0].reset()
+                        $("#mymodal").modal("hide")
+                        location.reload()
+
+                    } else {
+                        $.each(res.errors, function (name, data) {
+                            $("#id_" + name).next().text(data[0])
+                            console.log(name, data)
+                        })
+                    }
+                    console.log(res.code)
+                    console.log(res.error)
+
+                },
+            })
+        }
+
+
+        function OrderDeleteEvent() {
+            $(".order-delete").click(function () {
+                $("#mydelete").modal("show")
+
+                //给全局赋值
+                DELETEID = $(this).attr("uid");
+            })
+
+        }
+
+        function OrderComfirmDeleteEvent() {
+            $("#comfirmdelete").click(function () {
                 $.ajax({
-                    url: "/order/add/",
-                    type: 'post',
-                    data: $('#orderajaxadd').serialize(),
+                    url: "/order/delete/",
+                    type: "GET",
+                    data: {
+                        uid: DELETEID
+                    },
                     dataType: "JSON",
                     success: function (res) {
                         if (res.status) {
-                            alert("添加成功");
-                            $("#orderajaxadd")[0].reset()
-                            $("#mymodal").modal("hide")
                             location.reload()
-
                         } else {
-                            $.each(res.errors, function (name, data) {
-                                $("#id_" + name).next().text(data[0])
-                                console.log(name, data)
-                            })
-                        }
-                        console.log(res.code)
-                        console.log(res.error)
+                            //删除失败
+                            alert(res.error)
 
-                    },
+                        }
+
+                    }
+
                 })
             })
+        }
+
+        function OrderEditEvent() {
+            $(".order-edit").click(function () {
+                // 清除表单的信息
+                $("#orderajaxadd")[0].reset();
+
+                // 获取编辑的ID值，并赋值到全局变量
+                var uid = $(this).attr("uid");
+                EDIT_ID = uid
+                // 修改对话标题
+                $(".modal-title").text("快来编辑订单")
+
+                $.ajax({
+                    url: "/order/details/",
+                    type: "get",
+                    dataType: "JSON",
+                    data: {
+                        uid: uid
+                    },
+                    success: function (res) {
+                        if (res.status) {
+                            // 打开对话框
+                            $("#mymodal").modal("show")
+
+                            // 将数据赋值到对话框中的标签中
+                            $.each(res.data, function (name, value) {
+                                $("#id_" + name).val(value)
+                            })
+                        } else {
+                            alert(res.error)
+                        }
+
+
+                    }
+                })
+            })
+
         }
 
 

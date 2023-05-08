@@ -1,7 +1,9 @@
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
 import random
 
-def check_code(width=120, height=50, char_lengh=5, font_file=r"D:\Mycode\djangoProject\myprocess\app\Monaco.ttf", font_size=28):
+
+def check_code(width=120, height=50, char_lengh=5, font_file=r"D:\Mycode\myprocess\app\Monaco.ttf",
+               font_size=28):
     code = []
     img = Image.new(mode="RGB", size=(width, height), color=(255, 255, 255))
     draw = ImageDraw.Draw(img, mode='RGB')
