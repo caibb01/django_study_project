@@ -1,4 +1,5 @@
 # 导入django的shortcuts使用函数返回的参数,到达html或者是直接返回或重定向
+import openpyxl
 from django.shortcuts import render, HttpResponse, redirect
 # 导入要使用到的数据库模块
 from app.models import *
@@ -8,10 +9,13 @@ from django.core.exceptions import ValidationError
 from django.core import validators
 # 使用到分页时,需要向上取整
 import math
+# 使用openpyxl来对文件进行处理
+from openpyxl import load_workbook
 # 由于靓号列表中返回的内容,但是前端页面显示的是代码,与逾期不一样,是字符串而不是编译为html,需要标记为安全的
 from django.utils.safestring import mark_safe
 from django import forms
-from app.utils.modelform import UserModelForm,PrettyNumForm,PrettyEditNumForm,UserModelForm
+from app.utils.modelform import UserModelForm, PrettyNumForm, PrettyEditNumForm, UserModelForm
+
 
 def depart_list(request):
     """获取部门列表数据"""
@@ -69,3 +73,24 @@ def depart_edit(request, edit_id):
     # 重定向会部门列表
     return redirect("/depart/list/")
 
+
+def depart_multi(request):
+    """  批量上传（Excel文件）"""
+    # 1.获取用户上传的文件对象
+    file_object = request.FILES.get("enty")
+
+    # 2.将对象上传给openpyxl 由openpyxl打开文件
+    wb = load_workbook(file_object)
+    sheet = wb.worksheets[0]
+
+    # 3.循环获取每一行的数据
+    cell = sheet.cell(1, 1)
+    for row in sheet.iter_rows(min_row=55, max_row=60):
+        text = row[1].value
+        # 判断获取到的数据在数据库是否存在，存在则不写入数据库，不存在则写入
+        exists = Department.objects.filter(title=text).exists()
+        if exists:
+            return HttpResponse("该部门已存在")
+        else:
+            Department.objects.create(title=text)
+    return redirect("/depart/list/")

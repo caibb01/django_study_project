@@ -38,7 +38,6 @@ def chart_bar(request):
             "legend_list": legend
         }
     }
-    print(result["data"]["series_list"])
     return JsonResponse(result)
 
 
@@ -55,3 +54,54 @@ def chart_Pie(request):
         "data_list": db_series_list
     }
     return JsonResponse(result)
+
+
+def chart_line(request):
+    legend_list = ['需求', '缺陷', '任务', '数据问题', '新接口']
+    xaxis_list = ['一月', '二月', '三月', '四月', '五月', '六月', '七月 ']
+    series_list = [
+        {
+            "name": '需求',
+            "type": 'line',
+            "stack": 'Total',
+            "data": [120, 132, 101, 134, 90, 230, 210]
+        },
+        {
+            "name": '缺陷',
+            "type": 'line',
+            "stack": 'Total',
+            "data": [220, 182, 191, 234, 290, 330, 310]
+        },
+        {
+            "name": '任务',
+            "type": 'line',
+            "stack": 'Total',
+            "data": [150, 232, 201, 154, 190, 330, 410]
+        },
+        {
+            "name": '数据问题',
+            "type": 'line',
+            "stack": 'Total',
+            "data": [320, 332, 301, 334, 390, 330, 320]
+        },
+        {
+            "name": '新接口',
+            "type": 'line',
+            "stack": 'Total',
+            "data": [820, 932, 901, 934, 1290, 1330, 1320]
+        }
+    ]
+    result = {
+        "status": True,
+        "data": {
+            "legend_list": legend_list,
+            "xaxis_list": xaxis_list,
+            "series_list": series_list,
+        }
+    }
+    return JsonResponse(result)
+
+
+def highcharts(request):
+
+    return render(request,"highcharts.html")

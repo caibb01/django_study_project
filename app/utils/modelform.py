@@ -101,27 +101,3 @@ class PrettyEditNumForm(BootStrapModelForm):
         return txt_mobile
 
 
-class UserModelForm(BootStrapModelForm):
-    # 单独给name加上校验，例如长度校验最大为3，由于这里重新定义了name，那么在被页面使用的时候就是下面这种校验了
-    # name = forms.CharField(max_length=3, label="请输入用户名")
-    #  models中的定义是：name = models.CharField(verbose_name="姓名", max_length=64)
-    class Meta:
-        model = UserInfo  # 注意这里是用model而不是models，因为我们只是用到几个，而不是这张表的全部字段
-
-        # 这里定义这个fields的字段是哪一些
-        fields = ["name", "password", "account", "age", "create_time", "zone", "depart", "gender"]
-        """ 下面这么写给每一个都加上样式也可以，但是这么做会比较麻烦 """
-        """ fields这里面的内容是【一个字段名+字段对应的对象，典型的例子部门depart】
-        {'name': <django.forms.fields.CharField object at 0x000002979134F4F0> 
-         'password': <django.forms.fields.CharField object at 0x000002979134F400>
-         'account': <django.forms.fields.DecimalField object at 0x000002979134F5B0>
-         'age': <django.forms.fields.IntegerField object at 0x000002979134F3D0>, ......
-        """
-        #   = {
-        #     "name": forms.TextInput(attrs={"class": "form-control"}),
-        #     "password": forms.PasswordInput(attrs={"class": "form-control"}),
-        #     "age": forms.TextInput(attrs={"class": "form-control"}),
-        # }
-        """ 使用下面这种方法，比较开发 """
-
-    # 重新定义__init__的方法
