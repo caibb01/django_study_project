@@ -17,7 +17,7 @@ from django.contrib import admin
 from django.views.static import serve
 from django.urls import path, re_path
 from django.conf import settings
-from app.views import depart, user, prettynum, admin, account, order, task, chart, upload
+from app.views import depart, user, prettynum, admin, account, order, task, chart, upload, jarvis
 
 urlpatterns = [
 
@@ -80,5 +80,9 @@ urlpatterns = [
     # 城市列表
     path('city/list/', upload.city_list),
     path('city/add/', upload.city_add),
+
+
+    #贾维斯续签
+    path('jarvis/renew/', jarvis.jarvisrenew),
 
 ]

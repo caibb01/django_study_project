@@ -80,7 +80,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'cm_rep',  # 数据库名字
         'USER': 'root',
-        'PASSWORD': '12345',
+        'PASSWORD': '123456',
         'HOST': '127.0.0.1',  # 哪台机器安装了MySQl
         'PORT': '3306',  # 端口
     }
